@@ -1,0 +1,30 @@
+
+# Git
+.git
+.gitignore
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Fichiers temporaires
+*.log
+*.tmp
+.DS_Store
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+docker-compose*.yaml
+
+# Documentation
+README.md

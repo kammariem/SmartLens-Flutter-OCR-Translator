@@ -1,0 +1,56 @@
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+coverage/
+doc/api/
+
+# Generated files
+*.dart.js
+*.info.json
+*.js_
+*.js.deps
+*.js.map
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Android / Gradle
+.gradle/
+android/.gradle/
+android/local.properties
+android/key.properties
+*.keystore
+*.jks
+
+# iOS / macOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/
+
+# Secrets / Environment
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+
+# Logs / Temporary files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Docker local overrides
+docker-compose.override.yml
+
+# Firebase configuration (pending security review)
+android/app/google-services.json
+lib/firebase_options.dart
