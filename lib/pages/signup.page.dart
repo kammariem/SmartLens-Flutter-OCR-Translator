@@ -32,7 +32,7 @@ class SignupPage extends StatelessWidget {
               ),
             ),
             Text('SmartLens', style: Theme.of(context).textTheme.titleLarge),
-            AppTextField(controller: username, label: 'Username'),
+            AppTextField(controller: username, label: 'Email'),
             AppTextField(controller: password, label: 'Password', isPassword: true,),
             AppTextField(controller: confirmPassword, label: 'Confirm your password', isPassword: true,),
             PrimaryButton(
@@ -42,8 +42,7 @@ class SignupPage extends StatelessWidget {
               },
             ),
             TxtButton(label: "You already have an account.", onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/login');
+              Navigator.pushReplacementNamed(context, '/login');
             },)
 
           ],
@@ -52,40 +51,61 @@ class SignupPage extends StatelessWidget {
     );
   }
 
-  Future <void> _OnSignup(BuildContext context) async {
-    /*if(username.text.isNotEmpty && password.text.isNotEmpty){
-      prefs = await SharedPreferences.getInstance();
-      prefs.setString("login", username.text);
-      prefs.setString("password", password.text);
-      prefs.setBool("loggedIn", true);
-      Navigator.pop(context);
-      Navigator.pushNamed(context, "/home");
-    } else{
-      const snackBar = SnackBar(
-        content: Text('Id ou mot de passe vide.'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }*/
+  
+Future<void> _OnSignup(BuildContext context) async {
+  final email = username.text.trim();
+  final pwd = password.text;
+  final confirmPwd = confirmPassword.text;
 
-    try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: username.text,
-        password: password.text,
-      );
-      Navigator.pushNamed(context, "/home");
-
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        const snackBar = SnackBar(
-          content: Text('The password provided is too weak.'),
-        );
-      } else if (e.code == 'email-already-in-use') {
-        const snackBar = SnackBar(
-          content: Text('The account already exists for that email.'),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
+
+  if (email.isEmpty || pwd.isEmpty || confirmPwd.isEmpty) {
+    showMessage('Please fill in all fields.');
+    return;
+  }
+
+  if (pwd != confirmPwd) {
+    showMessage('Passwords do not match.');
+    return;
+  }
+
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: pwd,
+    );
+
+    if (!context.mounted) return;
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/home',
+      (route) => false,
+    );
+  } on FirebaseAuthException catch (e) {
+    if (!context.mounted) return;
+
+    switch (e.code) {
+      case 'weak-password':
+        showMessage('The password is too weak.');
+        break;
+      case 'email-already-in-use':
+        showMessage('This email is already registered.');
+        break;
+      case 'invalid-email':
+        showMessage('Please enter a valid email address.');
+        break;
+      default:
+        showMessage('Registration failed. Please try again.');
+    }
+  } catch (e) {
+    if (!context.mounted) return;
+    showMessage('An unexpected error occurred.');
+  }
+}
+
 }
